@@ -1,0 +1,44 @@
+{
+	"manifest_version": 2,
+	"name": "はてブロimageTitle",
+	"version": "0.0.1.7",
+	"description": "はてなブログにて画像を貼り付けるときにタイトルを編集できるようにするやつです。",
+	"icons": {
+		"16" : "images/hateblo_img16.png",
+		"48" : "images/hateblo_img48.png",
+		"128" : "images/hateblo_img128.png"
+	},
+	"options_ui": {
+		"open_in_tab": true,
+		"chrome_style": true,
+		"page": "options.html"
+	},
+	"background": {
+		"scripts": ["js/storage.js","js/background.js"],
+		"persistent": false
+	},
+	"page_action": {
+		"default_icon": {
+			"19": "images/hateblo_img19.png",
+			"38": "images/hateblo_img38.png"
+			},
+		"default_title": "はてブロimageTitle",
+		"default_popup": "popup.html"
+	},
+	"permissions": [
+		"storage",
+		"tabs",
+		"http://blog.hatena.ne.jp/*"
+	],
+	"homepage_url": "http://psn.hatenablog.jp/entry/discover-hatena",
+	"content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://platform.twitter.com https://apis.google.com; object-src 'self'",
+	"content_scripts": [
+		{
+			"matches": ["http://blog.hatena.ne.jp/*/*/edit*"],
+			"css": ["css/style.css"],
+			"js": ["js/jquery.min.js","js/google-analytics-bundle.js","js/ga.js","js/script.js"],
+			"all_frames": true,
+			"run_at": "document_start"
+		}
+	]
+}

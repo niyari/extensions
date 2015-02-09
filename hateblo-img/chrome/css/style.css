@@ -1,0 +1,66 @@
+@CHARSET "UTF-8";
+#psne-fotolofe-helper {
+	margin: 10px;
+}
+
+#psne-fotolofe-helper {}
+#psne-fotolofe-helper-inner {}
+
+#psne-fotolofe-helper-image {
+	width: 50px;
+	height: 50px;
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: 50% 50%;
+	float: left;
+	background-image: url("http://f.st-hatena.com/images/fotolife/p/psne/20141108/20141108183955_120.jpg");
+}
+
+#psne-fotolofe-helper-changed{
+	display: none;
+}
+#psne-fotolofe-helper-changed i{
+	margin: 3px;
+	padding: 2px;
+	background-color: #fff;
+	border: solid 1px #CAC8F8;
+}
+
+#psne-fotolofe-helper-edit {
+	float: left;
+}
+
+#psne-fotolofe-helper-edit-end {
+	clear: both;
+}
+
+#psne-fotolofe-helper-edit-title {
+	width: 195px;
+}
+#psne-fotolofe-helper-edit-cb {}
+
+.psne-fotolofe-helper-btn{
+	margin-top: 5px;
+	padding: 3px;
+	background-clip: padding-box;
+	cursor: pointer;
+	font-size: 12px;
+	text-align: center;
+	font-weight: bold;
+	-webkit-appearance: none;
+	border: 1px solid transparent;
+	text-decoration: none !important;
+	color: #ccc;
+
+}
+.psne-fotolofe-helper-enabled {
+	color: #fff !important;
+	background: #14afd6;
+}
+.psne-fotolofe-helper-disabled {
+	background-color: #eeeeee;
+	border-color: #ccc;
+	cursor: default !important;
+}
+
+

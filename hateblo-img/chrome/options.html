@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>設定 - はてブロimageTitle</title>
+<link href="css/options.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="container">
+	<div class="sidemenu">
+	<dl class="menulist">
+		<dt>メニュー</dt>
+		<dd id="setmenu1"  data-target="setting1"><span>設定</span></dd>
+		<dd id="setmenu2" data-target="setting2"><span>その他</span></dd>
+		<dd id="setmenu3" data-target="setting3"><span>about</span></dd>
+	</dl>
+	</div>
+	<div class="content">
+		<p>はてブロimageTitle</p>
+		<div id="setting1" class="">
+			<h2>全般の設定</h2>
+			<p>編集画面に表示される機能の設定します。<br>
+				■変更を行うタイミング<br>
+				<input type="checkbox" name="set1_btnclick" id="set1_btnclick">
+				<label for="set1_btnclick">「変更する」ボタンを押すまで変更しない</label><br>
+				■変更箇所<br>
+				<input name="set1_alttitle" type="radio" id="set1_alttitle1" value="1">
+				<label for="set1_alttitle1">alt、titleを変更する</label><br>
+				<input name="set1_alttitle" type="radio" id="set1_alttitle2" value="2">
+				<label for="set1_alttitle2">altのみ変更する</label><br>
+				<input name="set1_alttitle" type="radio" id="set1_alttitle3" value="3">
+				<label for="set1_alttitle3">titleのみ変更する</label><br>
+				■画像の拡大<br>
+				<input type="checkbox" name="set1_cbox" id="set1_cbox">
+				<label for="set1_cbox">あらかじめ「クリックで拡大しない」チェックを入れる</label><br>
+				<br>
+			</p>
+		</div>
+		<div id="setting2" class="hidemenu">
+			<h2>その他設定</h2>
+			<p>
+				<input type="checkbox" name="set2_analytics" id="set2_analytics">
+				<label for="set2_analytics">拡張機能の利用状況を送信しない</label>
+			</p>
+			<p>
+				機能の確認と統計的な利用状況の確認のため、Google AnalyticsとCookieを利用した計測を導入しています。<br>
+				チェックをオンにすると統計データの送信を停止します。
+			</p>
+		</div>
+		<div id="setting3" class="hidemenu">
+			<h2>拡張機能情報</h2>
+			<p>不具合の報告や最新情報はこちらから<br>
+			<a href="http://psn.hatenablog.jp/" target="_blank">http://psn.hatenablog.jp/</a></p>
+			<p>&nbsp; </p>
+		</div>
+	</div>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/google-analytics-bundle.js"></script>
+<script src="js/ga.js"></script>
+<script src="js/options.js"></script>
+</body>
+</html>
