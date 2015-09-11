@@ -11,7 +11,7 @@
     },
     "default_title": "svg test"
   },
-  "content_security_policy": "script-src 'self'; object-src 'self'; image-src 'self';",
+  "content_security_policy": "script-src 'self'; object-src 'self'; img-src 'self' data:; media-src *;",
   "description": "svgのアイコンを表示させるテスト。",
   "homepage_url": "http://psn.hatenablog.jp/entry/discover-hatena",
   "icons": {

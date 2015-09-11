@@ -127,7 +127,7 @@ function example3() {
 	var svg = makeSvgElem(190, 190);
 
 	if (nowH > 11) { nowH = nowH - 12; }
-	nowH = (nowH * 5 + (nowM / 60) + (nowS / 3600)) * 6;
+	nowH = (nowH * 5 + (nowM / 12) + (nowS / 720)) * 6;
 	svg.appendChild(makeClockElem('h', nowH));
 
 	nowM = (nowM + nowS / 60) * 6;
