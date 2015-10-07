@@ -35,8 +35,8 @@
 	"content_scripts": [
 		{
 			"matches": ["http://blog.hatena.ne.jp/*/*/edit*"],
-			"css": ["css/style.css"],
-			"js": ["js/jquery.min.js","js/google-analytics-bundle.js","js/ga.js","js/script.js"],
+			"css": ["css/hatena/hatenablog-image.css"],
+			"js": ["js/jquery.min.js","js/google-analytics-bundle.js","js/ga.js","js/hatena/hatenablog-image.js"],
 			"all_frames": true,
 			"run_at": "document_start"
 		}
