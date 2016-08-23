@@ -1,0 +1,39 @@
+{
+  "background": {
+    "scripts": [
+      "js/background.js"
+    ],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_icon": {
+      "19": "img/icon_19.png"
+    },
+    "default_title": "hatena-blog editor frame check"
+  },
+  "content_security_policy": "script-src 'self'; object-src 'self'; img-src 'self' data:; media-src *;",
+  "description": "はてなブログのエディタの構造を見るテスト。",
+  "homepage_url": "http://psn.hatenablog.jp/entry/discover-hatena",
+  "icons": {
+    "128": "img/img_16.png",
+    "16": "img/img_16.png",
+    "48": "img/img_16.png"
+  },
+  "manifest_version": 2,
+  "name": "hatena-blog editor frame check",
+  "permissions": [
+    "tabs",
+    "http://blog.hatena.ne.jp/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [ "http://blog.hatena.ne.jp/*/*/edit*" ],
+      "css": [ "css/sample.css" ],
+      "js": [ "js/jquery.min.js", "js/injection.js"],
+      "all_frames": true,
+      "run_at": "document_start"
+    }
+  ],
+  "short_name": "hb-frame",
+  "version": "0.0.0.1"
+}
