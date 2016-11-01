@@ -1,24 +1,49 @@
 @CHARSET "UTF-8";
 #psne-fotolofe-helper {
-	margin: 10px;
+	margin: 5px 0 0 0;
 }
 
+/*
 #psne-fotolofe-helper {}
 #psne-fotolofe-helper-inner {}
+*/
 
+#psne-fotolofe-helper-image-outer {
+	width: 50px;
+	height: 50px;
+	float: left;
+	position:relative;
+}
 #psne-fotolofe-helper-image {
+	position: absolute;
+	bottom: 0;
+	left: 0;
 	width: 50px;
 	height: 50px;
 	background-repeat: no-repeat;
 	background-size: contain;
 	background-position: 50% 50%;
-	float: left;
+	background-color: rgba(0, 0, 0, .1);
 	background-image: url("http://f.st-hatena.com/images/fotolife/p/psne/20141108/20141108183955_120.jpg");
+}
+#psne-fotolofe-helper-image:hover {
+	left: -185px;
+	width: 235px;
+	height: 235px;
 }
 
 #psne-fotolofe-helper-changed{
 	display: none;
 }
+#psne-fotolofe-helper-changed.fade{
+	display: block;
+	opacity:1;
+}
+#psne-fotolofe-helper-changed.fadeout{
+	opacity:0;
+	transition: all .5s;
+}
+
 #psne-fotolofe-helper-changed i{
 	margin: 3px;
 	padding: 2px;
@@ -26,7 +51,12 @@
 	border: solid 1px #CAC8F8;
 }
 
+#psne-fotolofe-helper-syntax-hatena.error-box {
+	margin:5px 0;
+}
+
 #psne-fotolofe-helper-edit {
+	margin: 0 0 0 2px;
 	float: left;
 }
 
@@ -35,9 +65,17 @@
 }
 
 #psne-fotolofe-helper-edit-title {
-	width: 195px;
+	width: 190px;
+	padding:3px;
 }
+#psne-fotolofe-helper-edit-alt {
+	width: 190px;
+	padding:3px;
+	display:none;
+}
+/*
 #psne-fotolofe-helper-edit-cb {}
+*/
 
 .psne-fotolofe-helper-btn{
 	margin-top: 5px;
@@ -47,20 +85,27 @@
 	font-size: 12px;
 	text-align: center;
 	font-weight: bold;
-	-webkit-appearance: none;
+	/* -webkit-appearance: none; */
 	border: 1px solid transparent;
-	text-decoration: none !important;
+	/* text-decoration: none !important; */
+	text-decoration: none;
 	color: #ccc;
 
 }
 .psne-fotolofe-helper-enabled {
-	color: #fff !important;
+	color: #fff;
+	/* 	color: #fff !important; */
 	background: #14afd6;
 }
 .psne-fotolofe-helper-disabled {
 	background-color: #eeeeee;
 	border-color: #ccc;
-	cursor: default !important;
+	cursor: default;
+	/* cursor: default !important; */
 }
 
+#button-psn-contents:before {
+	font-family: "blogicon";
+  content: '\f022';
 
+}

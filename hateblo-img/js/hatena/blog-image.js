@@ -1,204 +1,334 @@
-/*
- * はてブロimageTitle (仮)
- * この辺の設定は、はてなさんがガッチリやってくれるとみんなしあわせになる
- *
- *
- * OKTODO 設定画面はあった方が良い
- * OKTODO テキストのフォーカスが外れたら変更するオプションとか
- * OKTODO チェックボックス触った時に変更するオプションとか
- * TODO 既に貼ってある画像を編集するとか
- *
- */
-
-$(function(){
-	var alt_change = true, title_change = true, not_track_ga = false, btn_change = true;
-	var editTitle,editCbox,editTarget,editChangeBtn;
-	var syntaxMode = 'hatena';
-	setupTrack('Editview');
-
-	function createToolBox(){
-		//外枠をつくる
-		var edit_element ='';
-		var div_outerElement = document.createElement("div");
-		div_outerElement.id = 'psne-fotolofe-helper';
-		div_outerElement.innerHTML = '<i class="blogicon-plugin"></i><i class="blogicon-edit"></i> 画像のタイトル変えるやつ <a href="http://psn.hatenablog.jp/" target="_blank"><i class="blogicon-help tipsy-left" original-title="この設定は id:psne が作成した拡張機能によるものです。クリックすると作者ページへアクセスできます。はてな記法では変更できません。"></i></a>';
-		var div_element = document.createElement("div");
-		div_element.id = 'psne-fotolofe-helper-inner';
-
-		syntaxMode = $('#edit-form').find('[name="syntax"]').val();
-		tracker.sendEvent('Edit', 'SyntaxMode', syntaxMode);
-
-		if (syntaxMode === 'hatena'){
-			div_element.innerHTML = '<div id="psne-fotolofe-helper-syntax-hatena" class="error-box">はてな記法モードでは画像のタイトル変更ができません。</div>';
-			div_outerElement.appendChild(div_element);
-			document.getElementById("editor-support-operations").appendChild(div_outerElement);
-			return;
-		}
-
-		//右側の入力関連を作る
-		edit_element += '<input type="text" id="psne-fotolofe-helper-edit-title" value="(タイトル)" disabled><br>';
-		edit_element += '<input type="checkbox" id="psne-fotolofe-helper-edit-cb" value="1" disabled><label for="psne-fotolofe-helper-edit-cb">クリックで拡大しない</label><br>';
-		edit_element += '<div id="psne-fotolofe-helper-submit" class="psne-fotolofe-helper-btn psne-fotolofe-helper-disabled">変更する</div>';
-		edit_element += '<input type="hidden" id="psne-fotolofe-helper-edit-target" value="">';
-
-		//右側をつくる
-		edit_element = '<div id="psne-fotolofe-helper-edit">' + edit_element + '</div><div id="psne-fotolofe-helper-edit-end"></div>';
-		//画像表示を作る(左側)、組み立て
-		div_element.innerHTML = '<div id="psne-fotolofe-helper-image"><div id="psne-fotolofe-helper-changed"><i class="blogicon-check lg"></i></div></div>' + edit_element;
-
-		div_outerElement.appendChild(div_element);
-		document.getElementById("editor-support-operations").appendChild(div_outerElement);
-
-		editTitle = document.getElementById('psne-fotolofe-helper-edit-title');
-		editCbox = document.getElementById('psne-fotolofe-helper-edit-cb');
-		editChangeBtn = document.getElementById('psne-fotolofe-helper-submit');
-		editTarget = document.getElementById('psne-fotolofe-helper-edit-target');
-		load_settings();
-		disabledForm();
-		eventListener();
-	}
-
-	/* サンプルデータ。
-<div class="item" data-syntax="[f:id:psne:20150122151429p:plain]" data-html="<p><span itemscope itemtype=&quot;http://schema.org/Photograph&quot;><img src=&quot;http://cdn-ak.f.st-hatena.com/images/fotolife/p/psne/20150122/20150122151429.png&quot; alt=&quot;f:id:psne:20150122151429p:plain&quot; title=&quot;f:id:psne:20150122151429p:plain&quot; class=&quot;hatena-fotolife&quot; itemprop=&quot;image&quot;></span></p>
-" style="background-image: url(&quot;http://f.st-hatena.com/images/fotolife/p/psne/20150122/20150122151429_120.jpg&quot;)"></div>
-*/
-
-	function changeImgAttr(){
-		var divImg = document.querySelector('#editor-fotolife #items');
-		var imgAttr = divImg.querySelectorAll('.item');
-		var target = editTarget.value;
-		var altTitle = editTitle.value.replace(/"/g, '&quot;' );;
-		$(imgAttr).each(function(){
-			if( $(this).data('syntax') === target ){
-				//HTML置換
-				//Mdについては、現状はHTMLベタ書き。data属性を無視する代わりにMd用に記述しても良いかもしれない。
-				//TODO なんで見たままモードではschema.org/Photograph使われないんです？
-				var html = this.getAttribute('data-html');
-				if (alt_change) html = html.replace(/alt="(.*?)"/gm, 'alt="' + altTitle + '"' );
-				if (title_change) html = html.replace(/title="(.*?)"/gm, 'title="' + altTitle + '"' );
-
-				//リンクを開かない の判定
-				html = change_fotolifeClass(html);
-
-				this.setAttribute('data-html',html);
-				this.setAttribute('data-modified-title', editTitle.value );
-
-				//はてな記法置換 (タイトルの付け方が不明)
-//				var syntaxTitle = encodeURIComponent(altTitle);
-//				var syntax = $(this).data('syntax').match(/(\[f:id:.+:\d+.:)(plain|image|movie)(:.+\]|\])/)[1];
-//				syntax = syntax + 'plain:title=' + syntaxTitle + ']';
-//				//はてな記法で画像にタイトル付ける書き方を忘れた奴
-//				this.setAttribute('data-syntax',syntax);
-				$("#psne-fotolofe-helper-changed").fadeIn(100).fadeOut("slow");
-			}
-		});
-	}
-
-	function change_fotolifeClass(html){
-		//将来的にはclassのhatena-fotolifeだけ弄った方が良いかもしれない
-		// /class=".*hatena-fotolife.*(?="\s)/ か /class=".*hatena-fotolife.*"\s/
-		html = html.replace(/hatena-fotolife/m, '' );
-		if( editCbox.checked === false){
-			//つける
-			//class="hatena-fotolife"
-			html = html.replace(/class="/m, 'class="hatena-fotolife ' );
-		}
-		return html;
-	}
-
-	function disabledForm(){
-		//デフォルトが大はてな実験の画像なので、指定自体を消してCSS当てる
-		editTitle.value = null;
-		editTitle.disabled = true;
-		editCbox.disabled = true;
-		editChangeBtn.classList.add("psne-fotolofe-helper-disabled");
-		editChangeBtn.classList.remove("psne-fotolofe-helper-enabled");
-		$('#psne-fotolofe-helper-image').css('background-image', '' );
-	}
-
-	function load_settings(){
-		chrome.runtime.sendMessage({method: "getStorage", key: "alt_change"}, function(response) {
-			alt_change = response.data;
-		});
-		chrome.runtime.sendMessage({method: "getStorage", key: "title_change"}, function(response) {
-			title_change = response.data;
-		});
-		chrome.runtime.sendMessage({method: "getStorage", key: "not_track_ga"}, function(response) {
-			not_track_ga = response.data;
-		});
-		chrome.runtime.sendMessage({method: "getStorage", key: "btn_change"}, function(response) {
-			btn_change = response.data;
-		});
-		chrome.runtime.sendMessage({method: "getStorage", key: "disable_cbox"}, function(response) {
-			if(syntaxMode != 'hatena' && response.data){
-				editCbox.checked = true;
-			}
-		});
-
-		chrome.runtime.sendMessage({method: "showIcon"}, function(response) {
-//			console.log("タブID " + response.tabid);
-//			console.log(response.msg);
-		});
-
-	}
-
-	function eventListener(){
-		$("#editor-fotolife #items").on("click", ".item", function(elem){
-			if (syntaxMode === 'hatena') return;
-			if( ! this.classList.contains('selected') ){
-				//選択済み
-				if(this.getAttribute('data-modified-title') != null){
-					editTitle.value = this.getAttribute('data-modified-title');
-				}else{
-					editTitle.value = this.getAttribute('data-html').match(/(?:title=")(.*?)(?:")/)[1];
-				}
-				editTarget.value = this.getAttribute('data-syntax');
-				editTitle.disabled = false;
-				editCbox.disabled = false;
-				editChangeBtn.classList.remove("psne-fotolofe-helper-disabled");
-				editChangeBtn.classList.add("psne-fotolofe-helper-enabled");
-				$('#psne-fotolofe-helper-image').css('background-image',$(this).css('background-image') );
-				load_settings();
-				tracker.sendEvent('Edit', 'Select', 'Pictures');
-			}else{
-				//選択解除
-				tracker.sendEvent('Edit', 'UnSelect', 'Pictures');
-				disabledForm();
-			}
-		});
-
-		editChangeBtn.addEventListener('click', function() {
-			changeImgAttr();
-			tracker.sendEvent('Edit', 'Change', 'TitleBtn');
-		});
-		$('.paste-button').click(function(event){
-			//本家の画像貼り付けボタンを押した時の挙動。とりあえず解除しておく。
-			tracker.sendEvent('Edit', 'Insert', 'Pictures');
-			if (syntaxMode === 'hatena') return;
-			disabledForm();
-		});
-
-		editTitle.addEventListener('change', function() {
-			if(!btn_change) changeImgAttr();
-			tracker.sendEvent('Edit', 'Change', 'Title');
-			console.log("editTitle change");
-		});
-		editCbox.addEventListener('click', function() {
-			if(!btn_change) changeImgAttr();
-			tracker.sendEvent('Edit', 'Change', 'Cbox');
-			console.log("editCbox click");
-		});
-
-	}
-
-	console.log("はてブロimageTitleスタート");
-
-	//ターゲットをはてなブログのドメインblog.hatena.ne.jpにしてあるので、
-	//該当するページの場合はとにかくエディタが起動しているかチェックして生成する。
-	//が、とりあえずマニフェストファイル側で判定するようにした。
-
-	if(document.querySelector('#editor-support-operations')) createToolBox();
-
-
-
-});
+(() => {
+    "use strict";
+    let gaTracker = new GATracker.Create("UA-33470797-7");
+    let StorData = {};
+    let alt_change = true, title_change = true, btn_change = true, md_syntax = "hatena";
+    let editTitle, editAlt, editChkBox, editTarget, editChangeBtn;
+    let editTargetImgURI, editTargetImgBox, fotolifeImagePreview;
+    let targetItem;
+    let syntaxMode = "hatena";
+    let execFlagElement = "#editor-fotolife";
+    let appendToElementId = "uploader-wrapper";
+    function change_fotolifeClass(html) {
+        html = html.replace(/hatena-fotolife/m, "");
+        if (editChkBox.checked === false) {
+            html = html.replace(/class="/m, `class="hatena-fotolife `);
+        }
+        return html;
+    }
+    function change_syntaxMarkdown(elem) {
+        let altTitle = elem.getAttribute("data-modified-title");
+        if (!altTitle) {
+            altTitle = elem.getAttribute("data-syntax").match(/\[(\S+)\]/i)[1];
+            elem.setAttribute("data-modified-title", altTitle);
+        }
+        let html = elem.getAttribute("data-html");
+        if (md_syntax === "markdown") {
+            let syntax = "![";
+            let imgURL = html.match(/src=\"(\S+)\"\s/i)[1];
+            syntax += alt_change ? altTitle + "](" : "](";
+            syntax += imgURL;
+            syntax += title_change ? ` "` + altTitle + `")` : `)`;
+            elem.setAttribute("data-syntax", syntax);
+        }
+        else if (md_syntax === "html") {
+            elem.setAttribute("data-syntax", html);
+        }
+    }
+    function change_syntaxHatena(elem) {
+        let altTitle = elem.getAttribute("data-modified-title");
+        if (!altTitle) {
+            altTitle = elem.getAttribute("data-syntax").match(/\[(\S+)\]/i)[1];
+            elem.setAttribute("data-modified-title", altTitle);
+        }
+        let html = elem.getAttribute("data-html");
+        elem.setAttribute("data-syntax", html);
+    }
+    function changeImgAttr() {
+        let altTitle = editTitle.value.replace(/"/g, "&quot;");
+        ;
+        let html = targetItem.getAttribute("data-html");
+        if (alt_change) {
+            html = html.replace(/alt="(.*?)"/gm, `alt="` + altTitle + `"`);
+        }
+        ;
+        if (title_change) {
+            let creditText = altTitle;
+            if (StorData.creditText !== "") {
+                creditText += " / " + StorData.creditText;
+            }
+            html = html.replace(/title="(.*?)"/gm, `title="` + creditText + `"`);
+        }
+        ;
+        html = change_fotolifeClass(html);
+        targetItem.setAttribute("data-html", html);
+        targetItem.setAttribute("data-modified-title", editTitle.value);
+        if (syntaxMode === "markdown") {
+            change_syntaxMarkdown(targetItem);
+        }
+        if (syntaxMode === "hatena") {
+            change_syntaxHatena(targetItem);
+        }
+        var fadeIcon = (() => {
+            var popupFlg = false;
+            let changed_elem = document.getElementById("psne-fotolofe-helper-changed");
+            return {
+                up: () => {
+                    if (popupFlg) {
+                        return;
+                    }
+                    changed_elem.classList.add("fade");
+                    popupFlg = true;
+                    window.setTimeout(() => {
+                        changed_elem.classList.add("fadeout");
+                    }, 100);
+                    window.setTimeout(() => {
+                        popupFlg = false;
+                        changed_elem.classList.remove("fade");
+                        changed_elem.classList.remove("fadeout");
+                    }, 600);
+                }
+            };
+        })();
+        fadeIcon.up();
+    }
+    function eventListener() {
+        let pageElem_id_items = document.getElementById("items");
+        pageElem_id_items.addEventListener("click", function (e) {
+            if (e.target.classList.contains("item")) {
+                let target = e.target;
+                if (target.getAttribute("data-modified-title") !== null) {
+                    editTitle.value = target.getAttribute("data-modified-title");
+                }
+                else {
+                    editTitle.value = target.getAttribute("data-html").match(/(?:title=")(.*?)(?:")/)[1];
+                }
+                if (target.getAttribute("data-imagetitle-target") === null) {
+                    target.setAttribute("data-imagetitle-target", target.getAttribute("data-syntax"));
+                }
+                targetItem = target;
+                editTarget.value = target.getAttribute("data-imagetitle-target");
+                editTitle.disabled = false;
+                editChkBox.disabled = false;
+                editChangeBtn.classList.remove("psne-fotolofe-helper-disabled");
+                editChangeBtn.classList.add("psne-fotolofe-helper-enabled");
+                editTargetImgURI.value = target.getAttribute("data-html").match(/img src="(.+)" alt="/)[1];
+                editTargetImgBox.style.backgroundImage = "url(" + target.getAttribute("data-html").match(/img src="(.+)" alt="/)[1] + ")";
+                if (syntaxMode === "markdown") {
+                    change_syntaxMarkdown(target);
+                }
+                if (syntaxMode === "hatena") {
+                    change_syntaxHatena(targetItem);
+                }
+                gaTracker.sendEvent("Edit", "Select", "Pictures");
+            }
+        }, false);
+        editChangeBtn.addEventListener("click", function () {
+            changeImgAttr();
+            gaTracker.sendEvent("Edit", "Change", "TitleBtn");
+        });
+        document.querySelector("#editor-fotolife .paste-button").addEventListener("click", function () {
+            gaTracker.sendEvent("Edit", "Insert", "Pictures");
+        });
+        editTitle.addEventListener("change", function () {
+            if (!btn_change) {
+                changeImgAttr();
+            }
+            gaTracker.sendEvent("Edit", "Change", "Title");
+        });
+        editChkBox.addEventListener("click", function () {
+            if (!btn_change) {
+                changeImgAttr();
+            }
+            gaTracker.sendEvent("Edit", "Change", "Cbox");
+        });
+        editTargetImgBox.addEventListener("click", function () {
+            if (/Firefox\/(49|50)/.test(navigator.userAgent)) {
+                return;
+            }
+            if (!editTargetImgURI.value) {
+                return;
+            }
+            if (fotolifeImagePreview) {
+                fotolifeImagePreview.postMessage({ request: "OpenUri", uri: editTargetImgURI.value });
+            }
+            else {
+                chrome.runtime.sendMessage({ method: "HatenaBlogImage-OpenPreview" }, function (response) {
+                });
+            }
+            gaTracker.sendEvent("Edit", "Open", "Preview");
+        });
+        chrome.runtime.onConnect.addListener(function (port) {
+            fotolifeImagePreview = port;
+            port.onMessage.addListener(function (msg) {
+                if (msg.status === "Connect") {
+                    port.postMessage({ request: "OpenUri", uri: editTargetImgURI.value });
+                }
+                if (msg.status === "Close") {
+                    fotolifeImagePreview = null;
+                }
+            });
+            port.onDisconnect.addListener(function () {
+                fotolifeImagePreview = null;
+            });
+        });
+    }
+    function createToolBox() {
+        editTitle = document.createElement("input");
+        editTitle.id = "psne-fotolofe-helper-edit-title";
+        editTitle.type = "text";
+        editTitle.placeholder = "Title";
+        editTitle.disabled = true;
+        editAlt = document.createElement("input");
+        editAlt.id = "psne-fotolofe-helper-edit-alt";
+        editAlt.type = "text";
+        editAlt.placeholder = "Alt";
+        editAlt.disabled = true;
+        editChkBox = document.createElement("input");
+        editChkBox.id = "psne-fotolofe-helper-edit-cb";
+        editChkBox.type = "checkbox";
+        editChkBox.value = "1";
+        editChkBox.disabled = true;
+        let editChkBox_label = document.createElement("label");
+        editChkBox_label.setAttribute("for", "psne-fotolofe-helper-edit-cb");
+        editChkBox_label.textContent = "クリックで拡大しない";
+        editChangeBtn = document.createElement("div");
+        editChangeBtn.id = "psne-fotolofe-helper-submit";
+        editChangeBtn.className = "psne-fotolofe-helper-btn psne-fotolofe-helper-disabled";
+        editChangeBtn.textContent = "変更する";
+        editTarget = document.createElement("input");
+        editTarget.id = "psne-fotolofe-helper-edit-target";
+        editTarget.type = "hidden";
+        editTargetImgURI = document.createElement("input");
+        editTargetImgURI.id = "psne-fotolofe-helper-edit-target-imguri";
+        editTargetImgURI.type = "hidden";
+        editTargetImgBox = document.createElement("div");
+        editTargetImgBox.id = "psne-fotolofe-helper-image";
+        editTargetImgBox.appendChild((function () {
+            let elem = document.createElement("div");
+            elem.id = "psne-fotolofe-helper-changed";
+            elem.appendChild(document.createElement("i"));
+            elem.firstElementChild.className = "blogicon-check lg";
+            return elem;
+        })());
+        let elem_ID_psneFotolofeHelperOuter = document.createElement("div");
+        elem_ID_psneFotolofeHelperOuter.id = "psne-fotolofe-helper-image-outer";
+        elem_ID_psneFotolofeHelperOuter.appendChild(editTargetImgBox);
+        let elem_ID_psneFotolofeHelperEdit = document.createElement("div");
+        elem_ID_psneFotolofeHelperEdit.id = "psne-fotolofe-helper-edit";
+        elem_ID_psneFotolofeHelperEdit.appendChild(editTitle);
+        elem_ID_psneFotolofeHelperEdit.appendChild(document.createElement("br"));
+        elem_ID_psneFotolofeHelperEdit.appendChild(editChkBox);
+        elem_ID_psneFotolofeHelperEdit.appendChild(editChkBox_label);
+        elem_ID_psneFotolofeHelperEdit.appendChild(document.createElement("br"));
+        elem_ID_psneFotolofeHelperEdit.appendChild(editChangeBtn);
+        elem_ID_psneFotolofeHelperEdit.appendChild(editTarget);
+        elem_ID_psneFotolofeHelperEdit.appendChild(editTargetImgURI);
+        let elem_ID_psneFotolofeHelperEditFooter = document.createElement("div");
+        elem_ID_psneFotolofeHelperEditFooter.id = "psne-fotolofe-helper-edit-end";
+        let elem_ID_psneFotolofeHelperInner = document.createElement("div");
+        elem_ID_psneFotolofeHelperInner.id = "psne-fotolofe-helper-inner";
+        if (syntaxMode === "markdown" && md_syntax === "hatena") {
+            let errMsg_mode_hatena = document.createElement("div");
+            errMsg_mode_hatena.id = "psne-fotolofe-helper-syntax-hatena";
+            errMsg_mode_hatena.className = "error-box";
+            errMsg_mode_hatena.textContent = "はてな記法では画像タイトルの変更ができません。";
+            elem_ID_psneFotolofeHelperInner.appendChild(errMsg_mode_hatena);
+        }
+        else {
+            elem_ID_psneFotolofeHelperInner.appendChild(elem_ID_psneFotolofeHelperOuter);
+            elem_ID_psneFotolofeHelperInner.appendChild(elem_ID_psneFotolofeHelperEdit);
+            elem_ID_psneFotolofeHelperInner.appendChild(elem_ID_psneFotolofeHelperEditFooter);
+        }
+        let elem_ID_psneFotolofeHelper = document.createElement("div");
+        elem_ID_psneFotolofeHelper.id = "psne-fotolofe-helper";
+        elem_ID_psneFotolofeHelper.appendChild(document.createElement("i"));
+        elem_ID_psneFotolofeHelper.lastElementChild.className = "blogicon-plugin";
+        elem_ID_psneFotolofeHelper.appendChild(document.createElement("i"));
+        elem_ID_psneFotolofeHelper.lastElementChild.className = "blogicon-edit";
+        elem_ID_psneFotolofeHelper.appendChild(document.createElement("span"));
+        elem_ID_psneFotolofeHelper.lastElementChild.textContent = "画像のタイトル変えるやつ";
+        elem_ID_psneFotolofeHelper.appendChild((function () {
+            let elem = document.createElement("a");
+            elem.setAttribute("href", "http://psn.hatenablog.jp/");
+            elem.setAttribute("target", "_blank");
+            elem.appendChild(document.createElement("i"));
+            elem.firstElementChild.className = "blogicon-help tipsy-left";
+            elem.firstElementChild.setAttribute("original-title", "この設定は id:psne が作成した拡張機能によるものです。クリックすると作者ページへアクセスできます。");
+            return elem;
+        })());
+        elem_ID_psneFotolofeHelper.appendChild(elem_ID_psneFotolofeHelperInner);
+        let appendToElement = document.getElementById(appendToElementId);
+        appendToElement.appendChild(elem_ID_psneFotolofeHelper);
+        if (syntaxMode === "markdown" && md_syntax === "hatena") {
+            reCalculation_fotolifeItems(elem_ID_psneFotolofeHelper, 10);
+            return;
+        }
+        eventListener();
+        reCalculation_fotolifeItems(elem_ID_psneFotolofeHelper);
+    }
+    function reCalculation_fotolifeItems(elem_ID_psneFotolofeHelper, offset = 5) {
+        let fotolifeItems = document.getElementById("items");
+        fotolifeItems.style.height = (fotolifeItems.clientHeight - elem_ID_psneFotolofeHelper.clientHeight - offset) + "px";
+    }
+    function insertContentsButton() {
+        var button = document.createElement("button");
+        button.tabIndex = -1;
+        button.id = "button-psn-contents";
+        button.className = "button-psn-contents toolbar-button tipsy-top";
+        button.setAttribute("data-action", "");
+        button.setAttribute("data-track-name", "");
+        button.setAttribute("original-title", "目次をつける");
+        button.setAttribute("data-editor-syntax", syntaxMode);
+        button.textContent = "目次";
+        var elm = document.querySelector(".toolbar-more-container");
+        elm.parentNode.insertBefore(button, elm);
+        setTimeout(function () {
+            button.disabled = false;
+        }, 1000);
+        let injectionScript = document.createElement("script");
+        var injectionCode = function () {
+            let button = document.getElementById("button-psn-contents");
+            let syntax = button.getAttribute("data-editor-syntax");
+            let content = syntax === "html" ? "<p>[:contents]<br /></p><p></p>" : "\n\n[:contents]\n\n";
+            button.addEventListener("click", function () {
+                if (syntax === "html") {
+                    tinyMCE.activeEditor.execCommand("mceInsertContent", false, content);
+                }
+                else {
+                    let activeEditor = document.getElementById("body");
+                    let activeEditor_value = activeEditor.value;
+                    activeEditor.value = activeEditor_value.substr(0, activeEditor.selectionStart)
+                        + content
+                        + activeEditor_value.substr(activeEditor.selectionStart, activeEditor_value.length);
+                }
+            });
+        };
+        injectionScript.type = "text/javascript";
+        injectionScript.text = "(" + injectionCode.toString() + ")()";
+        elm.parentNode.insertBefore(injectionScript, elm);
+    }
+    function load_settings() {
+        let formElement = document.getElementById("edit-form");
+        syntaxMode = formElement.syntax.value;
+        insertContentsButton();
+        chrome.runtime.sendMessage({ "method": "blogImageTitle-getSetting" }, function (response) {
+            StorData = response.data;
+            alt_change = StorData.updateAlt;
+            title_change = StorData.updateTitle;
+            btn_change = StorData.isUpdateBtn;
+            md_syntax = StorData.mdModeSyntax;
+            createToolBox();
+            if (StorData.disableCbox) {
+                editChkBox.checked = true;
+            }
+        });
+    }
+    function startUpBlogImage() {
+        if (document.querySelector(execFlagElement)) {
+            load_settings();
+        }
+        gaTracker.sendScreenView("Editview");
+    }
+    document.addEventListener("DOMContentLoaded", startUpBlogImage);
+})();

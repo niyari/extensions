@@ -1,54 +1,60 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>about - はてブロimageTitle</title>
-<link href="css/popup.css" rel="stylesheet" type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+	<meta charset="utf-8" />
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="../../css/materialize.min.css" media="screen,projection" />
+	<link type="text/css" rel="stylesheet" href="../../css/hatena/blog-image-popup.css" />
+
 </head>
 <body>
-<div id="main">
-	<div class="text_center"><img src="images/hatenablog_tile_440.png" width="220" height="140"></div>
-	<p>この拡張機能は <a href="http://psn.hatenablog.jp/" target="_blank"  id="pop_hatenaID" data-label="hatenaID">id:psne</a> が開発したものです。</p>
+	<div class="center-align">
+		<img src="../../images/hatenablog_tile_440.png" width="220" height="140">
+	</div>
+	<p>この拡張機能は <a href="http://psn.hatenablog.jp/" target="_blank" id="pop_hatenaID" data-label="hatenaID">id:psne</a> が開発したものです。</p>
 	<p>はてなブログの「写真を投稿」タブにあるfotolifeの画像を貼り付ける際に、タイトルを設定する事ができます。</p>
 	<p>どうぞご利用ください。</p>
-	<p>
-		<div class="text_center">
-			<a href="options.html" target="_blank" class="btn" id="pop_options" data-label="options">設定をする</a>
-			<div class="menu-left">
-			<div id="pop_write_blog" data-label="write_blog">
-				<a href="http://blog.hatena.ne.jp/psne/psn.hatenablog.jp/edit?title=%E3%80%8C%E3%81%AF%E3%81%A6%E3%83%96%E3%83%ADimageTitle%E3%80%8D%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%81%AF%E3%81%A6%E3%81%AA%E3%83%96%E3%83%AD%E3%82%B0%E3%81%AE%E7%94%BB%E5%83%8F%E3%81%AE%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB%E3%81%A8alt%E5%B1%9E%E6%80%A7%E3%82%92%E6%9B%B8%E3%81%8D%E6%8F%9B%E3%81%88%E3%82%8B&body=%E3%81%AF%E3%81%A6%E3%81%AA%E3%83%96%E3%83%AD%E3%82%B0%E3%81%AE%E8%A8%98%E4%BA%8B%E3%82%92%E6%9B%B8%E3%81%8F%E6%99%82%E3%81%AB%E4%BD%BF%E7%94%A8%E3%81%99%E3%82%8B%E3%80%8C%E7%94%BB%E5%83%8F%E3%82%92%E9%81%B8%E6%8A%9E%E3%80%8D%E3%83%A1%E3%83%8B%E3%83%A5%E3%83%BC%E3%81%AB%E3%80%81%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB%E3%82%92%E8%A8%AD%E5%AE%9A%E3%81%99%E3%82%8B%E9%A0%85%E7%9B%AE%E3%81%8C%E5%A2%97%E3%81%88%E3%82%8BChorme%E6%8B%A1%E5%BC%B5%E6%A9%9F%E8%83%BD%E3%81%A7%E3%81%99%E3%80%82%20 [http://psn.hatenablog.jp/entry/img-attr:embed]" target="_blank" class="btn btn-blog">ブログで紹介</a>
+	<div class="row share-box">
+		<div class="col s12">
+			<div class="collection">
+				<a data-href="http://blog.hatena.ne.jp/my/edit" class="collection-item  grey darken-3 white-text center-align" id="blog_edit" data-label="blog_edit">記事を書く</a>
 			</div>
-			<div id="pop_twitter" data-label="twitter">
-				<a href="https://twitter.com/share?text=%E3%81%AF%E3%81%A6%E3%81%AA%E3%83%96%E3%83%AD%E3%82%B0%E3%81%A7%E7%94%BB%E5%83%8F%E3%82%92%E8%B2%BC%E3%82%8A%E4%BB%98%E3%81%91%E3%82%8B%E6%99%82%E3%81%AB%E3%80%81%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB%E3%83%BBalt%E5%B1%9E%E6%80%A7%E3%82%92%E8%A8%AD%E5%AE%9A%E3%81%A7%E3%81%8D%E3%82%8B%E6%8B%A1%E5%BC%B5%E6%A9%9F%E8%83%BD%E3%80%8C%E3%81%AF%E3%81%A6%E3%83%96%E3%83%ADimageTitle%E3%80%8D%20&url=http%3A%2F%2Fpsn.hatenablog.jp%2Fentry%2Fimg-attr&hashtags=%E3%81%AF%E3%81%A6%E3%81%AA%E3%83%96%E3%83%AD%E3%82%B0" target="_blank" class="btn btn-twit">ツイート</a>
+			<div class="collection">
+				<a data-href="/html/hatena/blog-image-options.html" class="collection-item active center-align" id="pop_options" data-label="options">設定をする</a>
 			</div>
-			</div>
-			<div class="menu-left">
-			<div id="pop_hatebu" data-label="hatebu">
-				<a href="http://b.hatena.ne.jp/entry/http://psn.hatenablog.jp/entry/img-attr" target="_blank" class="btn btn-htnb">はてブする</a>
-			</div>
-			<div id="pop_subscribe" data-label="subscribe">
-				<a href="http://blog.hatena.ne.jp/psne/psn.hatenablog.jp/subscribe" target="_blank" class="btn btn-subs">読者になる</a>
-			</div>
-			</div>
-			<div class="menu-left">
-			<div id="pop_googlep1" data-label="googlep1">
-			<!-- +1 ボタン を表示したい位置に次のタグを貼り付けてください。 -->
-<div class="g-plusone" data-size="medium" data-width="149" data-href="https://chrome.google.com/webstore/detail/%E3%81%AF%E3%81%A6%E3%83%96%E3%83%ADimagetitle/bejhchipbidplipjbdncgjbppgkpjfgp" data-callback="tracker.sendEvent('PopupPage', 'Click', 'googlep1');"></div>
-<!-- head 内か、body 終了タグの直前に次のタグを貼り付けてください。 -->
-<script src="https://apis.google.com/js/platform.js" async defer>
-   {lang: 'ja'}
-</script>
+		</div>
+		<div class="col s6">
+			<div class="collection">
+				<div id="pop_write_blog" data-label="write_blog" data-href="http://blog.hatena.ne.jp/my/edit?title=%E3%80%8C%E3%81%AF%E3%81%A6%E3%83%96%E3%83%ADimageTitle%E3%80%8D%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%81%AF%E3%81%A6%E3%81%AA%E3%83%96%E3%83%AD%E3%82%B0%E3%81%AE%E7%94%BB%E5%83%8F%E3%81%AE%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB%E3%81%A8alt%E5%B1%9E%E6%80%A7%E3%82%92%E6%9B%B8%E3%81%8D%E6%8F%9B%E3%81%88%E3%82%8B&body=%E3%81%AF%E3%81%A6%E3%81%AA%E3%83%96%E3%83%AD%E3%82%B0%E3%81%AE%E8%A8%98%E4%BA%8B%E3%82%92%E6%9B%B8%E3%81%8F%E6%99%82%E3%81%AB%E4%BD%BF%E7%94%A8%E3%81%99%E3%82%8B%E3%80%8C%E7%94%BB%E5%83%8F%E3%82%92%E9%81%B8%E6%8A%9E%E3%80%8D%E3%83%A1%E3%83%8B%E3%83%A5%E3%83%BC%E3%81%AB%E3%80%81%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB%E3%82%92%E8%A8%AD%E5%AE%9A%E3%81%99%E3%82%8B%E9%A0%85%E7%9B%AE%E3%81%8C%E5%A2%97%E3%81%88%E3%82%8BChorme%E6%8B%A1%E5%BC%B5%E6%A9%9F%E8%83%BD%E3%81%A7%E3%81%99%E3%80%82%20 [http://psn.hatenablog.jp/entry/img-attr :embed]">
+					<a class="collection-item center-align">ブログで紹介</a>
+				</div>
+				<div id="pop_hatebu" data-label="hatebu" data-href="http://b.hatena.ne.jp/entry/http://psn.hatenablog.jp/entry/img-attr">
+					<a class="collection-item center-align">はてブする</a>
+				</div>
+				<div id="pop_googlep1" data-label="googlep1" data-href="https://plus.google.com/share?url=https://chrome.google.com/webstore/detail/%E3%81%AF%E3%81%A6%E3%83%96%E3%83%ADimagetitle/bejhchipbidplipjbdncgjbppgkpjfgp">
+					<a class="collection-item center-align">Google +1</a>
+				</div>
 
 			</div>
-			<div>:)
+		</div>
+		<div class="col s6">
+			<div class="collection">
+				<div id="pop_twitter" data-label="twitter" data-href="https://twitter.com/share?text=%E3%81%AF%E3%81%A6%E3%81%AA%E3%83%96%E3%83%AD%E3%82%B0%E3%81%A7%E7%94%BB%E5%83%8F%E3%82%92%E8%B2%BC%E3%82%8A%E4%BB%98%E3%81%91%E3%82%8B%E6%99%82%E3%81%AB%E3%80%81%E3%82%BF%E3%82%A4%E3%83%88%E3%83%AB%E3%83%BBalt%E5%B1%9E%E6%80%A7%E3%82%92%E8%A8%AD%E5%AE%9A%E3%81%A7%E3%81%8D%E3%82%8B%E6%8B%A1%E5%BC%B5%E6%A9%9F%E8%83%BD%E3%80%8C%E3%81%AF%E3%81%A6%E3%83%96%E3%83%ADimageTitle%E3%80%8D%20&url=http%3A%2F%2Fpsn.hatenablog.jp%2Fentry%2Fimg-attr&hashtags=%E3%81%AF%E3%81%A6%E3%81%AA%E3%83%96%E3%83%AD%E3%82%B0">
+					<a class="collection-item center-align">ツイート</a>
+				</div>
+				<div id="pop_subscribe" data-label="subscribe" data-href="http://blog.hatena.ne.jp/psne/psn.hatenablog.jp/subscribe">
+					<a class="collection-item center-align">読者になる</a>
+				</div>
+				<div class="collection-item dismissable center-align">
+					:)
+				</div>
 			</div>
-			</div>
+		</div>
+	</div>
 
-
-	</p>
-</div>
-<script src="js/google-analytics-bundle.js"></script>
-<script src="js/ga.js"></script>
-<script src="js/popup.js"></script>
+	<script src="../../js/ga/ga-tracker.js"></script>
+	<script src="../../js/hatena/blog-image-popup.js"></script>
 </body>
 </html>

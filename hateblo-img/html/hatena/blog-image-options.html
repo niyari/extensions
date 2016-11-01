@@ -1,63 +1,202 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>設定 - はてブロimageTitle</title>
-<link href="css/options.css" rel="stylesheet" type="text/css">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>設定 - はてブロimageTitle</title>
+	<meta charset="utf-8" />
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="/css/materialize.min.css" />
+	<link type="text/css" rel="stylesheet" href="/css/hatena/blog-image-options.css" />
 </head>
-<body>
-<div class="container">
-	<div class="sidemenu">
-	<dl class="menulist">
-		<dt>メニュー</dt>
-		<dd id="setmenu1"  data-target="setting1"><span>設定</span></dd>
-		<dd id="setmenu2" data-target="setting2"><span>その他</span></dd>
-		<dd id="setmenu3" data-target="setting3"><span>about</span></dd>
-	</dl>
-	</div>
-	<div class="content">
-		<p>はてブロimageTitle</p>
-		<div id="setting1" class="">
-			<h2>全般の設定</h2>
-			<p>編集画面に表示される機能の設定します。<br>
-				■変更を行うタイミング<br>
-				<input type="checkbox" name="set1_btnclick" id="set1_btnclick">
-				<label for="set1_btnclick">「変更する」ボタンを押すまで変更しない</label><br>
-				■変更箇所<br>
-				<input name="set1_alttitle" type="radio" id="set1_alttitle1" value="1">
-				<label for="set1_alttitle1">alt、titleを変更する</label><br>
-				<input name="set1_alttitle" type="radio" id="set1_alttitle2" value="2">
-				<label for="set1_alttitle2">altのみ変更する</label><br>
-				<input name="set1_alttitle" type="radio" id="set1_alttitle3" value="3">
-				<label for="set1_alttitle3">titleのみ変更する</label><br>
-				■画像の拡大<br>
-				<input type="checkbox" name="set1_cbox" id="set1_cbox">
-				<label for="set1_cbox">あらかじめ「クリックで拡大しない」チェックを入れる</label><br>
+<body class="grey lighten-3">
+	<header>
+		<nav class="grey darken-4">
+			<div class="container">
+				<div class="col s12">
+					<div class="brand-logo">はてブロimageTitle</div>
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<main>
+
+		<div class="container">
+			<div id="blogImageTitle">
+
+				<div class="flow-text">全般の設定</div>
+				<div class="white z-depth-1 option-form">
+					<div class="section">
+						<div><p>記事を書く画面に表示される機能の設定します。</p></div>
+					</div>
+					<div class="divider"></div>
+					<div class="section">
+						<div>
+							<input type="checkbox" name="isUpdateBtn" id="isUpdateBtn">
+							<label for="isUpdateBtn">「変更する」ボタンを利用して編集する</label>
+						</div>
+					</div>
+					<div class="divider"></div>
+					<div class="section">
+						<div class="row">
+							<div class="col s12 l6">
+								<div class="input-field">
+									編集する属性
+								</div>
+							</div>
+							<div class="col s12 l6">
+								<div class="input-field">
+									<select id="updateAltTitle">
+										<option value="1">alt、title属性の両方を編集する</option>
+										<option value="2">alt属性のみを編集する</option>
+										<option value="3">title属性のみ編集する</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="divider"></div>
+					<div class="section">
+						<div class="row">
+							<div class="col s8 m10 l11">PC版表示では画像クリックで拡大表示を行わない</div>
+							<div class="col s4 m2 l1">
+								<div class="switch">
+									<label>
+										<input type="checkbox" name="disableCbox" id="disableCbox" />
+										<span class="lever"></span>
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="divider"></div>
+					<div class="section">
+						<div class="row">
+							<div class="col s12 l6">
+								Title属性に追加する定型文(クレジット表記)
+							</div>
+							<div class="col s12 l6">
+								<input id="creditText" placeholder="f:id:example  https://example.com" />
+							</div>
+						</div>
+					</div>
+
+				</div>
 				<br>
-			</p>
+
+				<div class="flow-text">はてな記法モード</div>
+				<div class="white z-depth-1 option-form">
+					<div class="section">
+						<p>記事をはてな記法モードで書く時に利用する画像の貼り付け方法です。</p>
+					</div>
+					<div class="section">
+						<div class="row">
+							<div class="col s12 l6">
+								はてな記法
+							</div>
+							<div class="col s12 l6">
+								<select>
+									<option value="" disabled selected>HTML</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+				<br>
+
+				<div class="flow-text">Markdownモード</div>
+				<div class="white z-depth-1 option-form">
+					<div class="section">
+						<div>
+							<p>記事をMarkdownモードで書く時に利用する画像の貼り付け方法です。</p>
+							<input name="mdModeSyntax" type="radio" id="mdModeSyntax1" class="with-gap" value="html" />
+							<label for="mdModeSyntax1">HTMLとして貼り付ける</label><br />
+							<input name="mdModeSyntax" type="radio" id="mdModeSyntax2" class="with-gap" value="markdown" />
+							<label for="mdModeSyntax2">Markdown記法として貼り付ける</label><br />
+							<input name="mdModeSyntax" type="radio" id="mdModeSyntax3" class="with-gap" value="hatena" />
+							<label for="mdModeSyntax3">はてな記法として貼り付ける (属性の編集はできません)</label><br />
+
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+			<br />
+			<div id="GATracker">
+				<div class="flow-text">その他の設定</div>
+				<div class="white z-depth-1 option-form">
+					<div class="section">
+						<div><p>利用統計</p></div>
+					</div>
+					<div class="divider"></div>
+					<div class="section">
+						<input type="checkbox" name="optoutGA" id="optoutGA" />
+						<label for="optoutGA">拡張機能の利用状況を送信しない</label>
+					</div>
+					<div class="section">
+						機能の確認と統計的な利用状況の確認のため、Google AnalyticsとCookieを利用した計測を導入しています。<br />
+						チェックをオンにすると統計データの送信を停止します。
+					</div>
+				</div>
+
+			</div>
+
+			<br />
+
+			<div class="flow-text">オープンソースライセンス</div>
+			<ul class="collapsible" data-collapsible="accordion">
+				<li>
+					<div class="collapsible-header">chrome-platform-analytics (google-analytics-bundle.js)</div>
+					<div class="collapsible-body">
+						<div class="container">
+							<pre class="">
+// Copyright 2013 Google Inc. All Rights Reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+							</pre>
+						</div>
+					</div>
+				</li>
+			</ul>
+
 		</div>
-		<div id="setting2" class="hidemenu">
-			<h2>その他設定</h2>
-			<p>
-				<input type="checkbox" name="set2_analytics" id="set2_analytics">
-				<label for="set2_analytics">拡張機能の利用状況を送信しない</label>
-			</p>
-			<p>
-				機能の確認と統計的な利用状況の確認のため、Google AnalyticsとCookieを利用した計測を導入しています。<br>
-				チェックをオンにすると統計データの送信を停止します。
-			</p>
+	</main>
+
+
+	<footer class="page-footer grey darken-3">
+		<div class="container">
+			<div class="row">
+				<div class="col l6 s12">
+					<h5 class="white-text">Notice</h5>
+					<p class="grey-text text-lighten-4">はてなブログを使うと良いと思いますよ。</p>
+					<p class="grey-text text-lighten-4">
+						最新情報の確認や不具合などのご連絡は<a href="http://psn.hatenablog.jp/" target="_blank">すなばいじり</a>へ。
+					</p>
+				</div>
+			</div>
 		</div>
-		<div id="setting3" class="hidemenu">
-			<h2>拡張機能情報</h2>
-			<p>不具合の報告や最新情報はこちらから<br>
-			<a href="http://psn.hatenablog.jp/" target="_blank">http://psn.hatenablog.jp/</a></p>
-			<p>&nbsp; </p>
+		<div class="footer-copyright grey darken-4">
+			<div class="container">
+				© 2015-<span id="optionFooterYear"></span> Pocket Systems
+				<a class="grey-text text-lighten-4 right" href="http://psn.hatenablog.jp/" target="_blank">すなばいじり</a>
+			</div>
 		</div>
-	</div>
-</div>
-<script src="js/jquery.min.js"></script>
-<script src="js/google-analytics-bundle.js"></script>
-<script src="js/ga.js"></script>
-<script src="js/options.js"></script>
+	</footer>
+	<script src="/js/jquery.min.js"></script>
+	<script src="/js/materialize.min.js"></script>
+	<script src="/js/ga/ga-tracker.js"></script>
+	<script src="/js/hatena/blog-image-options.js"></script>
 </body>
 </html>
