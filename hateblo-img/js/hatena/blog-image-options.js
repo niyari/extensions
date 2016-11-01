@@ -1,150 +1,167 @@
-/**
- *
- */
-/* 設定ロード */
-function setupOptions(){
-	var mn1_btn_change = document.getElementById('set1_btnclick');
-	setupTrack('Configure');
-	addClickListener(mn1_btn_change,'btn_change');
-
-	var mn1_alttitle1 = document.getElementById('set1_alttitle1');
-	var mn1_alttitle2 = document.getElementById('set1_alttitle2');
-	var mn1_alttitle3 = document.getElementById('set1_alttitle3');
-	[mn1_alttitle1,mn1_alttitle2,mn1_alttitle3].forEach( function(elem) {
-		addClickListener(elem,'alttitle');
-	});
-
-	var mn1_disable_cbox = document.getElementById('set1_cbox');
-	addClickListener(mn1_disable_cbox,'disable_cbox');
-
-	var mn2_not_track_ga = document.getElementById('set2_analytics');
-	addClickListener(mn2_not_track_ga,'not_track_ga');
-
-	clickMenuTab();
-
-
-	chrome.runtime.sendMessage({method: "getStorage", key: "btn_change"}, function(response) {
-		if(response.data){
-			mn1_btn_change.checked = true;
-		}
-	});
-
-	chrome.runtime.sendMessage({method: "getStorage", key: "alt_change"}, function(response) {
-		var alt_change = response.data;
-		chrome.runtime.sendMessage({method: "getStorage", key: "title_change"}, function(response) {
-			var title_change = response.data;
-			if (!alt_change && title_change){
-				//titleのみ変える
-				mn1_alttitle3.checked = true;
-			}else if(alt_change && !title_change){
-				//altのみ変える
-				mn1_alttitle2.checked = true;
-			}else{
-				//両方変える
-				mn1_alttitle1.checked = true;
-			}
-		});
-	});
-
-	chrome.runtime.sendMessage({method: "getStorage", key: "disable_cbox"}, function(response) {
-		if(response.data){
-			mn1_disable_cbox.checked = true;
-		}
-	});
-
-	chrome.runtime.sendMessage({method: "getStorage", key: "not_track_ga"}, function(response) {
-		if(response.data){
-			mn2_not_track_ga.checked = true;
-		}
-	});
-
-}
-
-
-function clickMenuTab(){
-	/* メニューの切り替え */
-	var menu1 = document.getElementById('setmenu1');
-	var menu2 = document.getElementById('setmenu2');
-	var menu3 = document.getElementById('setmenu3');
-	[menu1,menu2,menu3].forEach( function(elem,index) {
-		elem.addEventListener('click', function() {
-			$("#setting1").addClass("hidemenu");
-			$("#setting2").addClass("hidemenu");
-			$("#setting3").addClass("hidemenu");
-			$(document.getElementById(this.getAttribute('data-target') ) ).removeClass("hidemenu");
-			tracker.sendEvent('ConfigPage', 'Change', 'page',index);
-		});
-	});
-
-}
-
-function addClickListener(elem,key) {
-	elem.addEventListener('click', function() {
-		var trackValue = 0;
-		switch (key){
-		/* 設定1 */
-		case 'btn_change':
-			//変更するボタンチェック
-			var select_flg = false;
-			if(elem.checked){
-				select_flg = true;
-				trackValue = 1;
-			}
-			putStorage("btn_change",select_flg);
-			tracker.sendEvent('Config', 'Change', 'useChangeBtn',trackValue);
-			break;
-		case 'alttitle':
-			//属性変更
-			changeAltTitle(elem.value);
-			break;
-		case 'disable_cbox':
-			//画像拡大チェック
-			var disable_flg = false;
-			trackValue = 1;
-			if(elem.checked){
-				disable_flg = true;
-				trackValue = 0;
-			}
-			putStorage("disable_cbox",disable_flg);
-			tracker.sendEvent('Config', 'Change', 'useCbox',trackValue);
-			break;
-		/* 設定2 */
-		case 'not_track_ga':
-			//gaトラッキング拒否
-			var select_flg = false;
-			if(elem.checked){
-				select_flg = true;
-			}
-			putStorage("not_track_ga",select_flg);
-			break;
-		default:
-			//
-		}
-	});
-}
-
-function changeAltTitle(value){
-	var alt_flg = true;
-	var title_flg = true;
-	var alt_value = 1;
-	var title_value = 1;
-	if(value === "2"){
-		title_flg = false;
-		title_value = 0;
-	}else if(value === "3"){
-		alt_flg = false;
-		alt_value = 0;
-	}
-	putStorage("alt_change",alt_flg);
-	putStorage("title_change",title_flg);
-	tracker.sendEvent('Config', 'Change', 'ChangeAlt',alt_value);
-	tracker.sendEvent('Config', 'Change', 'ChangeTitle',title_value);
-}
-
-function putStorage(key,data){
-	chrome.runtime.sendMessage({method: "putStorage", key: key, data: data}, function(response) {
-		analyticsTrackingPermitted();
-	});
-}
-
-setupOptions();
+(() => {
+    "use strict";
+    let gaTracker = new GATracker.Create("UA-33470797-7");
+    gaTracker.sendScreenView("Configure");
+    document.addEventListener("DOMContentLoaded", () => {
+        let footerYear = document.getElementById("optionFooterYear");
+        let d = new Date();
+        footerYear.textContent = d.getFullYear().toString();
+    });
+    let StorData = {};
+    let Toast = (() => {
+        let popupFlg = false;
+        return {
+            up: () => {
+                if (popupFlg) {
+                    return;
+                }
+                popupFlg = true;
+                Materialize.toast("設定はページ更新後に反映されます", 2000, "", () => {
+                    popupFlg = false;
+                });
+            }
+        };
+    })();
+    chrome.runtime.sendMessage({ "method": "GATracker-getStorage" }, function (response) {
+        StorData.GATracker = response.data;
+        ga_Setup();
+    });
+    chrome.runtime.sendMessage({ "method": "blogImageTitle-getSetting" }, function (response) {
+        StorData.blogImageTitle = response.data;
+        bloglist_test();
+        blogImage_Setup();
+        $("select").material_select();
+    });
+    function blogImage_Setup() {
+        "use strict";
+        let isUpdateBtn = document.getElementById("isUpdateBtn");
+        if (StorData.blogImageTitle.isUpdateBtn) {
+            isUpdateBtn.checked = true;
+        }
+        $(isUpdateBtn).on("change", function () {
+            let sendData = { "method": "blogImageTitle-putSetting", "key": "isUpdateBtn", "value": isUpdateBtn.checked };
+            chrome.runtime.sendMessage(sendData);
+            gaTracker.sendEvent("Config", "Change", "useChangeBtn", isUpdateBtn.checked ? 1 : 0);
+            Toast.up();
+        });
+        let updateAltTitle = "3";
+        if (StorData.blogImageTitle.updateAlt && StorData.blogImageTitle.updateTitle) {
+            updateAltTitle = "1";
+        }
+        else if (StorData.blogImageTitle.updateAlt) {
+            updateAltTitle = "2";
+        }
+        let updateAltTitleElm = document.getElementById("updateAltTitle");
+        if (updateAltTitle) {
+            updateAltTitleElm.value = updateAltTitle;
+        }
+        $(updateAltTitleElm).on("change", function () {
+            let alt = true, title = true;
+            if (updateAltTitleElm.value === "2") {
+                title = false;
+            }
+            else if (updateAltTitleElm.value === "3") {
+                alt = false;
+            }
+            let sendData = { "method": "blogImageTitle-putSetting", "key": "updateAlt", "value": alt };
+            chrome.runtime.sendMessage(sendData);
+            sendData = { "method": "blogImageTitle-putSetting", "key": "updateTitle", "value": title };
+            chrome.runtime.sendMessage(sendData);
+            gaTracker.sendEvent("Config", "Change", "ChangeAlt", alt ? 1 : 0);
+            gaTracker.sendEvent("Config", "Change", "ChangeTitle", title ? 1 : 0);
+            Toast.up();
+        });
+        let disableCbox = document.getElementById("disableCbox");
+        if (StorData.blogImageTitle.disableCbox) {
+            disableCbox.checked = true;
+        }
+        $(disableCbox).on("change", function () {
+            let sendData = { "method": "blogImageTitle-putSetting", "key": "disableCbox", "value": disableCbox.checked };
+            chrome.runtime.sendMessage(sendData);
+            gaTracker.sendEvent("Config", "Change", "useCbox", disableCbox.checked ? 1 : 0);
+            Toast.up();
+        });
+        let creditText = document.getElementById("creditText");
+        if (StorData.blogImageTitle.creditText) {
+            creditText.value = StorData.blogImageTitle.creditText;
+        }
+        $(creditText).on("change", function () {
+            let sendData = {
+                "method": "blogImageTitle-putSetting",
+                "key": "creditText", "value": creditText.value
+            };
+            chrome.runtime.sendMessage(sendData);
+            Toast.up();
+        });
+        $("input[name=mdModeSyntax]").val([StorData.blogImageTitle.mdModeSyntax]);
+        $("input[name=mdModeSyntax]").on("change", function () {
+            let sendData = {
+                "method": "blogImageTitle-putSetting",
+                "key": "mdModeSyntax", "value": $("input[name=mdModeSyntax]:checked").val()
+            };
+            chrome.runtime.sendMessage(sendData);
+            Toast.up();
+        });
+    }
+    function ga_Setup() {
+        "use strict";
+        let Toast_GA = (() => {
+            let popupFlg = false;
+            return {
+                up: () => {
+                    if (popupFlg) {
+                        return;
+                    }
+                    popupFlg = true;
+                    Materialize.toast("設定はページ更新後に反映されます", 2000, "", () => {
+                        popupFlg = false;
+                    });
+                }
+            };
+        })();
+        let optoutGA = document.getElementById("optoutGA");
+        if (StorData.GATracker.settings.optoutGA) {
+            optoutGA.checked = true;
+        }
+        $(optoutGA).on("change", function () {
+            let sendData = { "method": "GATracker-putSettings", "key": "optoutGA", "value": optoutGA.checked };
+            chrome.runtime.sendMessage(sendData);
+            Toast_GA.up();
+        });
+    }
+    function bloglist_test() {
+        if (1) {
+            return;
+        }
+        var f = new XMLHttpRequest;
+        f.onload = function () {
+            if (f.status !== 200) {
+                return;
+            }
+            let text = f.responseText;
+            text = text.replace(/\r?\n/g, "");
+            text = text.replace(/<\/li>/g, "</li>\n");
+            let list = text.match(/<li class="arrow dropdown-mymenu-submenu">.*<\/li>/gm);
+            let ulelm = document.createElement("ul");
+            for (let i = 0; i < list.length; i++) {
+                ulelm.innerHTML += list[i];
+            }
+            let blogs = [{ default: { blogid: "", blogIcon: "", title: "初期設定", creditText: "" } }];
+            let elemList = {};
+            elemList = ulelm.querySelectorAll("[data-blog-id]");
+            for (let i = 0; i < elemList.length; i++) {
+                blogs.push({
+                    blogUrl: elemList[i].href,
+                    blogID: elemList[i].getAttribute("data-blog-id"),
+                    title: elemList[i].innerText,
+                    blogIcon: elemList[i].querySelector("img").src
+                });
+            }
+        };
+        f.onerror = function (e) {
+            console.error(f.statusText);
+        };
+        f.open("GET", "http://blog.hatena.ne.jp/-/menu/mymenu?", !0);
+        f.send(null);
+    }
+})();
